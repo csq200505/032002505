@@ -1,5 +1,6 @@
 package com.csq.kyky.job;
 
+import com.csq.kyky.service.ExcelExportService;
 import com.csq.kyky.spider.CovidDataSpider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class DailyFetchDataJob implements ApplicationRunner {
     @Autowired
     private CovidDataSpider spider;
 
+    @Autowired
+    private ExcelExportService exportService;
+
     /**
      * 如果获取失败，则不停执行到完成为止
      * 运行时则固定每天10点进行数据补偿
@@ -35,6 +39,7 @@ public class DailyFetchDataJob implements ApplicationRunner {
             getResult = spider.getNewWebsites();
         }
         while(!getResult);
+        ExcelExportService.excelOutputList = exportService.getExcelOutput();
     }
 
     @Override
