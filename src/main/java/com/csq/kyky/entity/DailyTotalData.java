@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 每日数据
+ * 每日全国数据
  *
  * @author csq
  * @date 2022/9/7

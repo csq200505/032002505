@@ -49,6 +49,9 @@ public class CovidDataSpider {
     @Autowired
     private DailyArticleMapper dailyArticleMapper;
 
+    @Autowired
+    private DataHandler dataHandler;
+
     private static final String BASE_URL = "http://www.nhc.gov.cn";
 
     /**
@@ -61,7 +64,7 @@ public class CovidDataSpider {
         String[]proxyArray = HttpHeaderConsts.ipPool.get(RandomIntegerGenerator.generate(0,HttpHeaderConsts.ipPool.size()-1)).split(":");
         String userAgent = HttpHeaderConsts.HEADER_USER_AGENTS[RandomIntegerGenerator.generate(0,14)];
         return Jsoup.connect(url)
-                .proxy(proxyArray[0],Integer.parseInt(proxyArray[1]))
+        //        .proxy(proxyArray[0],Integer.parseInt(proxyArray[1]))
                 .userAgent(userAgent)
                 .referrer(url)
                 .header("Accept-Language","zh-CN,zh;q=0.9")
@@ -178,14 +181,19 @@ public class CovidDataSpider {
             AtomicInteger sc = new AtomicInteger(0);
             AtomicInteger fc = new AtomicInteger(0);
             List<FailedURL> failedURLList = failedURLMapper.queryFailedUrlBySpiderId(spiderRecordMapper.querySpiderRecordByTimeOrder(3).get(0).getId());
+            List<DailyArticle>dailyArticleList = new ArrayList<>();
             failedURLList.parallelStream().forEach(failedURL -> {
                 DailyArticle dailyArticle = doLevelFourAnalyse(failedURL.getURL(), record);
                 if(dailyArticle==null){
                     fc.getAndIncrement();
                 }else{
                     sc.getAndIncrement();
+                    dailyArticleList.add(dailyArticle);
                 }
             });
+            if(dailyArticleList.size()!=0) {
+                dataHandler.handleTotalData(dailyArticleList);
+            }
             record.setSucceedRecords(sc.get());
             record.setFailedRecords(fc.get());
             record.setEndTime(new Date());
@@ -236,7 +244,7 @@ public class CovidDataSpider {
         //全部补偿完成，开始进行子数据捕捉和分析
         AtomicInteger sc = new AtomicInteger(successCount);
         AtomicInteger fc = new AtomicInteger(failedCount);
-        List<DailyArticle> dailyArticleList = new ArrayList<>(accessURLs.size());
+        List<DailyArticle> dailyArticleList = new ArrayList<>();
         log.info(" === 开始进行具体数据获取，需获取总量为{}条 ===",accessURLs.size());
         accessURLs.parallelStream().forEach(url -> {
             DailyArticle dailyArticle = doLevelFourAnalyse(url.getAccessURL(), record);
@@ -244,9 +252,13 @@ public class CovidDataSpider {
                 fc.getAndIncrement();
             }else{
                 sc.getAndIncrement();
+                log.info("文章内容："+dailyArticle.getContent());
                 dailyArticleList.add(dailyArticle);
             }
         });
+        if(dailyArticleList.size()!=0) {
+            dataHandler.handleTotalData(dailyArticleList);
+        }
         record.setSucceedRecords(sc.get());
         record.setFailedRecords(fc.get());
         record.setEndTime(new Date());
