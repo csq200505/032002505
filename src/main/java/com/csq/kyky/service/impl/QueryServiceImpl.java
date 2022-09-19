@@ -31,6 +31,7 @@ public class QueryServiceImpl implements QueryService {
     @Autowired
     private DailyProvincialDataMapper dailyProvincialDataMapper;
 
+    //大屏左上角图
     @Override
     public List<Map> getDefiniteInSevenDays() {
         List<Date> dateList = getDayRange();
@@ -48,6 +49,7 @@ public class QueryServiceImpl implements QueryService {
         return resultList;
     }
 
+    //大屏右上角图
     @Override
     public List<Map> getIndefiniteInSevenDays() {
         List<Date> dateList = getDayRange();
@@ -65,6 +67,7 @@ public class QueryServiceImpl implements QueryService {
         return resultList;
     }
 
+    //大屏左下图
     @Override
     public List<Map> getRank() {
         List<Date> dateList = getDayRange();
@@ -79,6 +82,7 @@ public class QueryServiceImpl implements QueryService {
         return resultList;
     }
 
+    //大屏中间地图
     @Override
     public List<Map> getNationalMapData() {
         Date time;
@@ -89,9 +93,10 @@ public class QueryServiceImpl implements QueryService {
         calendar.set(Calendar.MILLISECOND,0);
         Calendar calendar11am = Calendar.getInstance();
         calendar11am.set(Calendar.SECOND,0);
-        calendar11am.set(Calendar.MINUTE,0);
-        calendar11am.set(Calendar.HOUR_OF_DAY,11);
+        calendar11am.set(Calendar.MINUTE,10);
+        calendar11am.set(Calendar.HOUR_OF_DAY,10);
         calendar11am.set(Calendar.MILLISECOND,0);
+        //每日10点10分更新全国地图
         if(new Date().before(calendar11am.getTime())){
             calendar.add(Calendar.DAY_OF_MONTH,-2);
             time = calendar.getTime();
@@ -130,13 +135,15 @@ public class QueryServiceImpl implements QueryService {
         return resultMap;
     }
 
+    //大屏右下图
     @Override
     public List<Map> getDefiniteBetweenDaysAndProvince(GetDefiniteDto data) {
         Date startDate = data.getStartTime();
+        Date date = new Date(startDate.getTime()-86400000);
         Date endDate = data.getEndTime();
         int province = data.getCode();
         LambdaQueryWrapper<DailyProvincialData> queryWrapper = new LambdaQueryWrapper<DailyProvincialData>()
-                .between(DailyProvincialData::getDate, startDate,endDate)
+                .between(DailyProvincialData::getDate, date,endDate)
                 .eq(DailyProvincialData::getCode,province)
                 .orderBy(true, true,DailyProvincialData::getDate);
         List<DailyProvincialData>list = dailyProvincialDataMapper.selectList(queryWrapper);
@@ -160,17 +167,19 @@ public class QueryServiceImpl implements QueryService {
         calendar.set(Calendar.MINUTE,0);
         calendar.set(Calendar.HOUR_OF_DAY,0);
         calendar.set(Calendar.MILLISECOND,0);
+
         Calendar calendar11am = Calendar.getInstance();
         calendar11am.set(Calendar.SECOND,0);
-        calendar11am.set(Calendar.MINUTE,0);
-        calendar11am.set(Calendar.HOUR_OF_DAY,11);
+        calendar11am.set(Calendar.MINUTE,10);
+        calendar11am.set(Calendar.HOUR_OF_DAY,10);
         calendar11am.set(Calendar.MILLISECOND,0);
         Date todayTime;
         Date previousTime;
+        //每日10点10分更新大屏七日范围
         if(new Date().before(calendar11am.getTime())){
             calendar.add(Calendar.DAY_OF_MONTH,-2);
             todayTime = calendar.getTime();
-            calendar.add(Calendar.DAY_OF_MONTH,-5);
+            calendar.add(Calendar.DAY_OF_MONTH,-6);
             previousTime = calendar.getTime();
         }else{
             calendar.add(Calendar.DAY_OF_MONTH,-1);

@@ -32,7 +32,7 @@ public class DailyFetchDataJob implements ApplicationRunner {
      * 运行时则固定每天10点进行数据补偿
      */
     @Scheduled(cron = "0 0 10 * * ?")
-    public void handleGet() throws InterruptedException {
+    public void startOp() throws InterruptedException {
         boolean getResult;
         do{
             Thread.sleep(200);
@@ -44,6 +44,6 @@ public class DailyFetchDataJob implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        handleGet();
+        startOp();
     }
 }

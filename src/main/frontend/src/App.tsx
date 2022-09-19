@@ -52,11 +52,11 @@ function App() {
                 <ChineseProvincalMap data = {map}/>
             </div>
             <div className="basic-change-in-seven-days">
-                <p>七日内全国新增确诊数量变化</p>
+                <p>七日内内地新增确诊数量变化</p>
                 <BasicLineGraph data = {definiteData}/>
             </div>
             <div className="total-change-in-seven-days">
-                <p>七日内全国新增无症状数量变化</p>
+                <p>七日内内地新增无症状数量变化</p>
                 <BasicLineGraph data ={inDefiniteData}/>
             </div>
             <div className="graph-for-provinces">
@@ -75,7 +75,7 @@ function App() {
 
             </div>
             <div className="bottomLeftRank">
-                <p>七日内全国新增确诊前10名</p>
+                <p>七日内内地新增确诊前10名</p>
                 <BasicBarGraph data = {rank}/>
             </div>
             <RightBottomBox/>

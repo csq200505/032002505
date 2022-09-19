@@ -1,6 +1,5 @@
 package com.csq.kyky.spider;
 
-import com.csq.kyky.dao.DailyArticleMapper;
 import com.csq.kyky.dao.DailyProvincialDataMapper;
 import com.csq.kyky.dao.DailyTotalDataMapper;
 import com.csq.kyky.entity.DailyArticle;
@@ -9,9 +8,6 @@ import com.csq.kyky.entity.DailyTotalData;
 import com.csq.kyky.utils.ProvinceData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -56,13 +52,13 @@ public class DataHandler {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.YEAR, 2021);
-        calendar.set(Calendar.MONTH, 2);
-        calendar.set(Calendar.DATE, 30);
+        calendar.set(Calendar.MONTH, 1);
+        calendar.set(Calendar.DATE, 7);
         calendar.set(Calendar.HOUR, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         Date diffTime = calendar.getTime();
-
+        //遍历每篇通报
         dailyArticleList.forEach(article -> {
             article.setDate(new Date(article.getDate().getTime() - 86400000));
             log.info(simpleDateFormat.format(article.getDate()));
@@ -82,9 +78,9 @@ public class DataHandler {
 //            System.out.println("Found value: " + m1.group(2) );
 
                     System.out.println("新增本土确诊：" + m11.group(3));
-                    dailyTotalData.setDefiniteAmount(Integer.parseInt(m11.group(3)));
+                    dailyTotalData.setDefiniteAmount(Integer.parseInt(m11.group(3)));//入库
                     System.out.println("新增各省份确诊：" + m11.group(4));
-                    provincialDefinite = m11.group(4).split("，|、|；");
+                    provincialDefinite = m11.group(4).split("，|、|；");//分隔各省份数据
 
                 } else if (m12.find()) {
 
@@ -138,7 +134,7 @@ public class DataHandler {
                 }
                 log.info("=== end ===");
 
-
+                    //各省份数据入库
                     for (String pro : provincialDefinite) {
                         Matcher m4 = r4.matcher(pro);
                         if(m4.find()&&ProvinceData.getProvinceCodeByName(m4.group(1))!=null){

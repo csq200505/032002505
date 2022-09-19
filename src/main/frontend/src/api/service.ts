@@ -1,5 +1,5 @@
 import request from "umi-request";
-
+import apiConfig from '../env'
 
 export interface Response<T = any>{
     code:number,
@@ -17,7 +17,14 @@ export interface ApiResults<T = any>{
  * @param data
  * @param url
  */
-const api = '/api'
+let api:string;
+
+if(process.env.NODE_ENV=='development'){
+    api = apiConfig.development.API;
+}else{
+    api = apiConfig.production.API;
+}
+
 export const DoPost = (data:any,url:string) => {
     const promise: Promise<ApiResults> = new Promise((resolve) => {
         request.post(

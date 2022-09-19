@@ -30,4 +30,6 @@ public interface DailyProvincialDataMapper extends BaseMapper<DailyProvincialDat
 
     @Select("Select * from `daily_provincial_data` where `date` = #{date}")
     List<DailyProvincialData> getDataByDate(Date date);
+
+
 }

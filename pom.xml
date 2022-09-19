@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.csq</groupId>
     <artifactId>kyky</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0-RELEASE</version>
     <name>kyky</name>
     <description>kyky</description>
     <properties>
